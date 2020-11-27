@@ -39,13 +39,12 @@ def get_password_at_index(index):
 
 
 def crack(data):
-    print(data)
-    data = ast.literal_eval(data)
+    data = ast.literal_eval(data) # Turn the string into a dictionary
     pwd_hash = data['hash'] # Placeholder
     start_index = int(data['index'][0])
     end_index = int(data['index'][1])
-    while start_index <= end_index:
-        pwd_attempt = get_password_at_index(start_index).encode()
+    while start_index < end_index:
+        pwd_attempt = get_password_at_index(start_index).encode() 
         attempt_hash = base64.b64encode(md5(pwd_attempt).digest())
         print(f"attempting {pwd_attempt}: evaluated to {attempt_hash}")
         if attempt_hash == pwd_hash:
@@ -79,14 +78,13 @@ while True:
     try:
        print('connection from', client_address, file=sys.stderr)
        data = ''
-       # Receive the data in small chunks and retransmit it
+       # Receive the data in small chunks
        while True:
            data += connection.recv(16).decode()
            print('received "%s"' % data, file=sys.stderr)
-           if data[-3:] == "END":
-               print(f"here it's {data}")
+           if data[-3:] == "END": # END is place holder for something demarcating end of message
                crack(data[:-3])  
-               break
+               break 
        break
    
     finally:
