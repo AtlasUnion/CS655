@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-William Frazier
-TCP Server
+Password Cracking Worker
 CS655
-First Programming Assignment
 """
 
 import socket
 import sys
 from hashlib import md5
-import ast
+import ast # Safer than using the built in eval()
 import math
 import base64
 
@@ -62,14 +60,12 @@ def crack(data):
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-
 port_num = int(sys.argv[1])
-#port_num = 58319
 
-#hostname = socket.gethostname()    
-#IPAddr = socket.gethostbyname(hostname)  
+hostname = socket.gethostname()    
+IPAddr = socket.gethostbyname(hostname)  
 
-server_address = ('127.0.0.1', port_num)
+server_address = (IPAddr, port_num)
 print('Starting up on %s port %s' % server_address, file=sys.stderr)
 sock.bind(server_address)
 
