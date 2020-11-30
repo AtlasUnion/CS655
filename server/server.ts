@@ -1,6 +1,6 @@
-import * as express from "./server/node_modules/express"
-import * as bodyParser from "./server/node_modules/body-parser"
-import { promises } from "./server/node_modules/fs"
+import * as express from "express"
+import * as bodyParser from "body-parser"
+import { promises } from "fs"
 
 const app = express()
 app.listen(8080, () => {
