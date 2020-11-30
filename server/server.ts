@@ -37,7 +37,6 @@ app.post('/api/processform', (req, res) => {
 })
 
 
-// TODO: use tcp to connect to worker nodes and get results
 async function sendRequest(md5hash) {
     const beginTime = Date.now()
     return new Promise((resolve, reject) => {
@@ -67,6 +66,8 @@ async function sendRequest(md5hash) {
         }
     })
 }
+
+// add/remove workers
 
 var rl = readline.createInterface({
     input: process.stdin,
