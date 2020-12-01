@@ -49,13 +49,13 @@ def get_password_at_index(index):
 
 def crack(data, connection):
     data = ast.literal_eval(data) # Turn the string into a dictionary
-    pwd_hash = data['hash'] # Placeholder
+    pwd_hash = base64.b64decode(data['hash'])
     start_index = int(data['index'][0])
     end_index = int(data['index'][1])
     print(pwd_hash)
     while start_index < end_index:
         pwd_attempt = get_password_at_index(start_index).encode() 
-        attempt_hash = base64.b64encode(md5(pwd_attempt).digest())
+        attempt_hash = md5(pwd_attempt).digest()
 #        print(f"attempting {pwd_attempt}: evaluated to {attempt_hash}")
         if attempt_hash == pwd_hash:
             connection.sendall(pwd_attempt + b'\n')
