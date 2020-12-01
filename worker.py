@@ -48,10 +48,10 @@ def crack(data):
         attempt_hash = base64.b64encode(md5(pwd_attempt).digest())
         print(f"attempting {pwd_attempt}: evaluated to {attempt_hash}")
         if attempt_hash == pwd_hash:
-            connection.sendall(pwd_attempt)
+            connection.sendall(pwd_attempt + b'\n')
             return
         start_index+=1
-    connection.sendall(b"Not in range")
+    connection.sendall(b"Fail to find password\n")
 
 
 
