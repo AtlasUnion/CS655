@@ -55,7 +55,7 @@ def crack(data, connection):
     while start_index < end_index:
         pwd_attempt = get_password_at_index(start_index).encode() 
         attempt_hash = base64.b64encode(md5(pwd_attempt).digest())
-        print(f"attempting {pwd_attempt}: evaluated to {attempt_hash}")
+#        print(f"attempting {pwd_attempt}: evaluated to {attempt_hash}")
         if attempt_hash == pwd_hash:
             connection.sendall(pwd_attempt + b'\n')
             return
@@ -149,8 +149,8 @@ def Main(client, connection):
     port = connection[1]
     print(f"Connection from {ip} on port {port}")
     data = client.recv(1024)
-    if data[-3:] == b'END':
-        crack(data[:-3].decode(), client)
+    if data[-1:] == b'\n':
+        crack(data[:-1].decode(), client)
     client.close()
     print(f"Closed connection with {ip} on port {port}")
         

@@ -28,7 +28,7 @@ try:
     
     # Send data
     print('sending: ', end='')
-    message = "{'hash': b'/JPSe2O0LRk+fyvduXBZsA==', 'index': [0,250000]}END"
+    message = "{'hash': b'/JPSe2O0LRk+fyvduXBZsA==', 'index': [0,250000]}\n"
     sock.sendall(message.encode())
     echo = ''
     while echo == '':
