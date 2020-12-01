@@ -43,6 +43,7 @@ def crack(data):
     pwd_hash = data['hash'] # Placeholder
     start_index = int(data['index'][0])
     end_index = int(data['index'][1])
+    print(pwd_hash)
     while start_index < end_index:
         pwd_attempt = get_password_at_index(start_index).encode() 
         attempt_hash = base64.b64encode(md5(pwd_attempt).digest())
@@ -62,7 +63,9 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 port_num = int(sys.argv[1])
 
 hostname = socket.gethostname()    
-IPAddr = socket.gethostbyname(hostname)  
+# IPAddr = socket.gethostbyname(hostname)
+
+IPAddr = 'localhost'  
 
 server_address = (IPAddr, port_num)
 print('Starting up on %s port %s' % server_address, file=sys.stderr)
