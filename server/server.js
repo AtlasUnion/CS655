@@ -43,7 +43,7 @@ var carrier = require("carrier");
 var readline = require("readline");
 var worker_ips = ["127.0.0.1"];
 var num_worker_to_use = 1;
-var worker_port = 1337; // TODO: change actual port
+var worker_port = 1338; // TODO: change actual port
 var total_search_space = Math.pow(52, 5);
 var app = express();
 app.listen(8080, function () {
@@ -65,7 +65,6 @@ app.post('/api/processform', function (req, res) {
         res.send(result);
     });
 });
-// TODO: use tcp to connect to worker nodes and get results
 function sendRequest(md5hash) {
     return __awaiter(this, void 0, void 0, function () {
         var beginTime;
@@ -74,16 +73,21 @@ function sendRequest(md5hash) {
             return [2 /*return*/, new Promise(function (resolve, reject) {
                     var length_of_search_for_each_worker = total_search_space / num_worker_to_use;
                     for (var i = 0; i < num_worker_to_use; i++) {
-                        var worker_json = {
-                            hash: md5hash,
-                            index: [i * length_of_search_for_each_worker, (i + 1) * length_of_search_for_each_worker]
-                        };
+                        var start_index = (i * length_of_search_for_each_worker).toString();
+                        var end_index = ((i + 1) * length_of_search_for_each_worker).toString();
+                        // var worker_json = {
+                        //     hash: "b'" + md5hash + "'",
+                        //     index: [i*length_of_search_for_each_worker, (i+1)*length_of_search_for_each_worker]
+                        // }
                         if (i == num_worker_to_use - 1) {
-                            worker_json.index = [i * length_of_search_for_each_worker, total_search_space];
+                            // worker_json.index = [i*length_of_search_for_each_worker, total_search_space]
+                            start_index = (i * length_of_search_for_each_worker).toString();
+                            end_index = total_search_space.toString();
                         }
+                        var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
                         var socket = new net.Socket();
                         socket.connect(worker_port, worker_ips[i], function () { });
-                        socket.write(JSON.stringify(worker_json) + "\n");
+                        socket.write(string_to_be_send);
                         var my_carrier = carrier.carry(socket);
                         my_carrier.on('line', function (line) {
                             if (line == "Fail to find password") {
@@ -100,6 +104,7 @@ function sendRequest(md5hash) {
         });
     });
 }
+// add/remove workers
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
