@@ -10,6 +10,15 @@ from hashlib import md5
 import ast # Safer than using the built in eval()
 import math
 import base64
+import threading
+from _thread import start_new_thread
+
+# Some threading code from 
+    # https://www.geeksforgeeks.org/socket-programming-multi-threading-python/
+    # https://www.youtube.com/watch?v=FKlmAkEb40s
+
+
+print_lock = threading.Lock() 
 
 
 # return char associated with the index
@@ -38,7 +47,7 @@ def get_password_at_index(index):
     return final_string
 
 
-def crack(data):
+def crack(data, connection):
     data = ast.literal_eval(data) # Turn the string into a dictionary
     pwd_hash = data['hash'] # Placeholder
     start_index = int(data['index'][0])
@@ -55,6 +64,97 @@ def crack(data):
 
 
 
+## Create a TCP/IP socket
+#sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#
+## Bind the socket to the port
+#port_num = int(sys.argv[1])
+#
+#hostname = socket.gethostname()    
+#IPAddr = socket.gethostbyname(hostname)  
+#
+#server_address = (IPAddr, port_num)
+#print('Starting up on %s port %s' % server_address, file=sys.stderr)
+#sock.bind(server_address)
+#
+## Listen for incoming connections
+#sock.listen(5)
+#
+#while True:
+#    # Wait for a connection
+#    print('Waiting for a connection',file=sys.stderr)
+#    connection, client_address = sock.accept()
+#    try:
+#       print('connection from', client_address, file=sys.stderr)
+#       data = ''
+#       # Receive the data in small chunks
+#       while True:
+#           data += connection.recv(16).decode()
+#           print('received "%s"' % data, file=sys.stderr)
+#           if data[-3:] == "END": # END is place holder for something demarcating end of message
+#               crack(data[:-3])  
+#               break 
+#       break
+#   
+#    finally:
+#        # Clean up the connection
+#        connection.close()
+        
+        
+#def Main(): 
+#    # Create a TCP/IP socket
+#    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#    
+#    # Bind the socket to the port
+#    port_num = int(sys.argv[1])
+#    
+#    hostname = socket.gethostname()    
+#    IPAddr = socket.gethostbyname(hostname)  
+#    
+#    server_address = (IPAddr, port_num)
+#    print('Starting up on %s port %s' % server_address, file=sys.stderr)
+#    sock.bind(server_address)
+#    
+#    # Listen for incoming connections
+#    sock.listen(5)
+#
+#    print("socket is listening") 
+#  
+#    # a forever loop until client wants to exit 
+#    while True: 
+#        
+#        # establish connection with client 
+#        connection, client_address = sock.accept()
+#        try:
+#           print_lock.acquire()
+#           print('connection from', client_address, file=sys.stderr)
+#           data = ''
+#           # Receive the data in small chunks
+#           while True:
+#               data += connection.recv(16).decode()
+#               print('received "%s"' % data, file=sys.stderr)
+#               if data[-3:] == "END": # END is place holder for something demarcating end of message
+#                   start_new_thread(crack, (data,connection,))
+#                   break 
+#           break
+#           
+#        finally:
+#            # Clean up the connection
+#            connection.close()
+#            
+#  
+    
+def Main(client, connection):  
+    ip = connection[0]
+    port = connection[1]
+    print(f"Connection from {ip} on port {port}")
+    data = client.recv(1024)
+    if data[-3:] == b'END':
+        crack(data[:-3].decode(), client)
+    client.close()
+    print(f"Closed connection with {ip} on port {port}")
+        
+        
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -70,26 +170,24 @@ sock.bind(server_address)
 
 # Listen for incoming connections
 sock.listen(5)
-
+        
+        
 while True:
     # Wait for a connection
     print('Waiting for a connection',file=sys.stderr)
-    connection, client_address = sock.accept()
     try:
-       print('connection from', client_address, file=sys.stderr)
-       data = ''
-       # Receive the data in small chunks
-       while True:
-           data += connection.recv(16).decode()
-           print('received "%s"' % data, file=sys.stderr)
-           if data[-3:] == "END": # END is place holder for something demarcating end of message
-               crack(data[:-3])  
-               break 
-       break
-   
-    finally:
-        # Clean up the connection
-        connection.close()
+        connection, client_address = sock.accept()
+        start_new_thread(Main, (connection, client_address))
+    except KeyboardInterrupt:
+        print("Shutting down on keyboard interrupt.")
+    except Exception:
+        print("Unexpected error, closing the connection.")
+
+sock.close()
+
+  
+  
+
 
 
 

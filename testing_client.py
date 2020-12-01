@@ -32,7 +32,7 @@ try:
     sock.sendall(message.encode())
     echo = ''
     while echo == '':
-        data = sock.recv(16)
+        data = sock.recv(32)
         data = data.decode()
         echo += data
         #print('received "%s"' % data, file=sys.stderr)
