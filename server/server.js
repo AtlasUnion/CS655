@@ -84,7 +84,7 @@ function sendRequest(md5hash) {
                             start_index = (i * length_of_search_for_each_worker).toString();
                             end_index = total_search_space.toString();
                         }
-                        var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}END";
+                        var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
                         var socket = new net.Socket();
                         socket.connect(worker_port, worker_ips[i], function () { });
                         socket.write(string_to_be_send);

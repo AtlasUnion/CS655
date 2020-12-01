@@ -163,9 +163,9 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 port_num = int(sys.argv[1])
 
 hostname = socket.gethostname()    
-# IPAddr = socket.gethostbyname(hostname)
+IPAddr = socket.gethostbyname(hostname)
 
-IPAddr = 'localhost'  
+# IPAddr = 'localhost'  
 
 server_address = (IPAddr, port_num)
 print('Starting up on %s port %s' % server_address, file=sys.stderr)

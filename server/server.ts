@@ -44,16 +44,11 @@ async function sendRequest(md5hash) {
         for (var i = 0; i < num_worker_to_use; i++) {
             var start_index = (i*length_of_search_for_each_worker).toString()
             var end_index = ((i+1)*length_of_search_for_each_worker).toString()
-            // var worker_json = {
-            //     hash: "b'" + md5hash + "'",
-            //     index: [i*length_of_search_for_each_worker, (i+1)*length_of_search_for_each_worker]
-            // }
             if (i == num_worker_to_use - 1) {
-                // worker_json.index = [i*length_of_search_for_each_worker, total_search_space]
                 start_index = (i*length_of_search_for_each_worker).toString()
                 end_index = total_search_space.toString()
             }
-            var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}END"
+            var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
             var socket = new net.Socket()
             socket.connect(worker_port, worker_ips[i], () => {})
             socket.write(string_to_be_send)
