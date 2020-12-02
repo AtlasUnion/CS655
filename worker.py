@@ -46,6 +46,31 @@ def get_password_at_index(index):
     final_string = fifth_char + fourth_char + third_char + second_char + first_char
     return final_string
 
+def increment_string(string):
+    char_list = list(string)
+    mapped_to_num_list = []
+    for char in char_list:
+        if ((ord(char) >= 65) and (ord(char) <= 90)):
+            mapped_to_num_list.append(ord(char)-65)
+        else:
+            mapped_to_num_list.append(ord(char)-97+26)
+    carry = 1
+    for i in range(len(mapped_to_num_list)-1, -1, -1):
+        mapped_to_num_list[i] = mapped_to_num_list[i] + carry
+        if (mapped_to_num_list[i] > 51):
+            carry = 1
+            mapped_to_num_list[i] = 0
+        else:
+            carry = 0
+    final_string_char_list = []
+    for num in mapped_to_num_list:
+        if ((num >= 0) and (num <= 25)):
+            final_string_char_list.append(chr(num + 65))
+        else:
+            final_string_char_list.append(chr(num -26  + 97))
+    return "".join(final_string_char_list)
+
+
 
 def crack(data, connection):
     data = ast.literal_eval(data) # Turn the string into a dictionary
@@ -53,14 +78,16 @@ def crack(data, connection):
     start_index = int(data['index'][0])
     end_index = int(data['index'][1])
     print(pwd_hash)
+    pwd_string = get_password_at_index(start_index)
     while start_index < end_index:
-        pwd_attempt = get_password_at_index(start_index).encode() 
+        pwd_attempt = pwd_string.encode()
         attempt_hash = md5(pwd_attempt).digest()
 #        print(f"attempting {pwd_attempt}: evaluated to {attempt_hash}")
         if attempt_hash == pwd_hash:
             connection.sendall(pwd_attempt + b'\n')
             return
         start_index+=1
+        pwd_string = increment_string(pwd_string)
     connection.sendall(b"Fail to find password\n")
     
 def Main(client, connection):  
@@ -81,9 +108,9 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 port_num = int(sys.argv[1])
 
 hostname = socket.gethostname()    
-IPAddr = socket.gethostbyname(hostname)
+# IPAddr = socket.gethostbyname(hostname)
 
-# IPAddr = 'localhost'  
+IPAddr = 'localhost'  
 
 server_address = (IPAddr, port_num)
 print('Starting up on %s port %s' % server_address, file=sys.stderr)
@@ -101,6 +128,7 @@ while True:
         start_new_thread(Main, (connection, client_address))
     except KeyboardInterrupt:
         print("Shutting down on keyboard interrupt.")
+        exit()
     except Exception:
         print("Unexpected error, closing the connection.")
 

@@ -26,7 +26,33 @@ def get_password_at_index(index):
     return final_string
 
 
-print(get_password_at_index(0)) # should get AAAAA
-print(get_password_at_index(1)) # should get AAAAB
-print(get_password_at_index(pow(52,5) - 1)) # should get zzzzz
-print(get_password_at_index(95051008)) # should get zzzzy
+# print(get_password_at_index(0)) # should get AAAAA
+# print(get_password_at_index(1)) # should get AAAAB
+# print(get_password_at_index(pow(52,5) - 1)) # should get zzzzz
+print(get_password_at_index(266142820)) # should get zzzzy
+
+def increment_string(string):
+    char_list = list(string)
+    mapped_to_num_list = []
+    for char in char_list:
+        if ((ord(char) >= 65) and (ord(char) <= 90)):
+            mapped_to_num_list.append(ord(char)-65)
+        else:
+            mapped_to_num_list.append(ord(char)-97+26)
+    carry = 1
+    for i in range(len(mapped_to_num_list)-1, -1, -1):
+        mapped_to_num_list[i] = mapped_to_num_list[i] + carry
+        if (mapped_to_num_list[i] > 51):
+            carry = 1
+            mapped_to_num_list[i] = 0
+        else:
+            carry = 0
+    final_string_char_list = []
+    for num in mapped_to_num_list:
+        if ((num >= 0) and (num <= 25)):
+            final_string_char_list.append(chr(num + 65))
+        else:
+            final_string_char_list.append(chr(num -26  + 97))
+    return "".join(final_string_char_list)
+
+print(increment_string("AAAzz"))

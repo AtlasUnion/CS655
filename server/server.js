@@ -42,7 +42,9 @@ var net = require("net");
 var carrier = require("carrier");
 var readline = require("readline");
 var fs = require("fs");
-var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"];
+var output_filename = process.argv[2];
+// var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"]
+var worker_ips = ["127.0.0.1"];
 var num_worker_to_use = 1;
 var worker_port = 1338; // TODO: change actual port
 var total_search_space = Math.pow(52, 5);
@@ -68,23 +70,22 @@ app.post('/api/processform', function (req, res) {
 });
 function sendRequest(md5hash) {
     return __awaiter(this, void 0, void 0, function () {
-        var beginTime;
         return __generator(this, function (_a) {
-            beginTime = Date.now();
             return [2 /*return*/, new Promise(function (resolve, reject) {
                     var length_of_search_for_each_worker = total_search_space / num_worker_to_use;
-                    for (var i = 0; i < num_worker_to_use; i++) {
-                        var start_index = (i * length_of_search_for_each_worker).toString();
-                        var end_index = ((i + 1) * length_of_search_for_each_worker).toString();
+                    var _loop_1 = function () {
+                        start_index = (i * length_of_search_for_each_worker).toString();
+                        end_index = ((i + 1) * length_of_search_for_each_worker).toString();
                         if (i == num_worker_to_use - 1) {
                             start_index = (i * length_of_search_for_each_worker).toString();
                             end_index = total_search_space.toString();
                         }
-                        var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
-                        var socket = new net.Socket();
+                        string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
+                        socket = new net.Socket();
                         socket.connect(worker_port, worker_ips[i], function () { });
+                        var beginTime = Date.now();
                         socket.write(string_to_be_send);
-                        var my_carrier = carrier.carry(socket);
+                        my_carrier = carrier.carry(socket);
                         my_carrier.on('line', function (line) {
                             if (line == "Fail to find password") {
                                 socket.destroy();
@@ -92,13 +93,17 @@ function sendRequest(md5hash) {
                             else {
                                 var totalTime = Date.now() - beginTime;
                                 console.log(totalTime);
-                                fs.appendFile('time.txt', totalTime.toString() + "\r\n", function (err) {
+                                fs.appendFile(output_filename, totalTime.toString() + "\r\n", function (err) {
                                     if (err)
                                         throw err;
                                 });
                                 resolve(line);
                             }
                         });
+                    };
+                    var start_index, end_index, string_to_be_send, socket, my_carrier;
+                    for (var i = 0; i < num_worker_to_use; i++) {
+                        _loop_1();
                     }
                 })];
         });

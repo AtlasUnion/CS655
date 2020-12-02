@@ -7,7 +7,8 @@ import * as readline from "readline"
 import * as fs from "fs"
 
 var output_filename = process.argv[2]
-var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"]
+// var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"]
+var worker_ips = ["127.0.0.1"]
 var num_worker_to_use = 1
 const worker_port = 1338 // TODO: change actual port
 const total_search_space = 52**5
@@ -40,7 +41,7 @@ app.post('/api/processform', (req, res) => {
 
 
 async function sendRequest(md5hash) {
-    const beginTime = Date.now()
+
     return new Promise((resolve, reject) => {
         const length_of_search_for_each_worker = total_search_space/num_worker_to_use;
         for (var i = 0; i < num_worker_to_use; i++) {
@@ -53,6 +54,7 @@ async function sendRequest(md5hash) {
             var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
             var socket = new net.Socket()
             socket.connect(worker_port, worker_ips[i], () => {})
+            const beginTime = Date.now()
             socket.write(string_to_be_send)
             var my_carrier = carrier.carry(socket)
             my_carrier.on('line', (line) => {
