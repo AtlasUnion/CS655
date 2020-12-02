@@ -4,6 +4,7 @@ import { promises } from "fs"
 import * as net from "net"
 import * as carrier from "carrier"
 import * as readline from "readline"
+import * as fs from "fs"
 
 var worker_ips = ["127.0.0.1"]
 var num_worker_to_use = 1
@@ -59,6 +60,9 @@ async function sendRequest(md5hash) {
                 } else {
                     const totalTime = Date.now() - beginTime
                     console.log(totalTime)
+                    fs.appendFile('time.txt', totalTime.toString(), (err) => {
+                        if (err) throw err
+                    })
                     resolve(line)
                 }
             })

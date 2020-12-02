@@ -29,4 +29,4 @@ def get_password_at_index(index):
 print(get_password_at_index(0)) # should get AAAAA
 print(get_password_at_index(1)) # should get AAAAB
 print(get_password_at_index(pow(52,5) - 1)) # should get zzzzz
-print(get_password_at_index(pow(52,5) - 2)) # should get zzzzy
+print(get_password_at_index(95051008)) # should get zzzzy
