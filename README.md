@@ -48,7 +48,7 @@ Please refer to GENI TCP lab.
 
 ## Graph to produce
 ### #request/second vs. Average response time (with x # of worker nodes)
-We should produce 4 different plots for each number of worker nodes. We need to use four testing functions.
+We should produce different plots for each number of worker nodes. We need to use four testing functions.
 
 One worker
 ```javascript
