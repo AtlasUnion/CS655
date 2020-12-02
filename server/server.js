@@ -41,7 +41,7 @@ var bodyParser = require("body-parser");
 var net = require("net");
 var carrier = require("carrier");
 var readline = require("readline");
-var worker_ips = ["127.0.0.1"];
+var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"];
 var num_worker_to_use = 1;
 var worker_port = 1338; // TODO: change actual port
 var total_search_space = Math.pow(52, 5);
@@ -75,12 +75,7 @@ function sendRequest(md5hash) {
                     for (var i = 0; i < num_worker_to_use; i++) {
                         var start_index = (i * length_of_search_for_each_worker).toString();
                         var end_index = ((i + 1) * length_of_search_for_each_worker).toString();
-                        // var worker_json = {
-                        //     hash: "b'" + md5hash + "'",
-                        //     index: [i*length_of_search_for_each_worker, (i+1)*length_of_search_for_each_worker]
-                        // }
                         if (i == num_worker_to_use - 1) {
-                            // worker_json.index = [i*length_of_search_for_each_worker, total_search_space]
                             start_index = (i * length_of_search_for_each_worker).toString();
                             end_index = total_search_space.toString();
                         }
