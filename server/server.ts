@@ -6,6 +6,7 @@ import * as carrier from "carrier"
 import * as readline from "readline"
 import * as fs from "fs"
 
+var output_filename = process.argv[2]
 var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"]
 var num_worker_to_use = 1
 const worker_port = 1338 // TODO: change actual port
@@ -60,7 +61,7 @@ async function sendRequest(md5hash) {
                 } else {
                     const totalTime = Date.now() - beginTime
                     console.log(totalTime)
-                    fs.appendFile('time.txt', totalTime.toString() + "\r\n", (err) => {
+                    fs.appendFile(output_filename, totalTime.toString() + "\r\n", (err) => {
                         if (err) throw err
                     })
                     resolve(line)
