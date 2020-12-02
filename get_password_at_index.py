@@ -29,7 +29,7 @@ def get_password_at_index(index):
 # print(get_password_at_index(0)) # should get AAAAA
 # print(get_password_at_index(1)) # should get AAAAB
 # print(get_password_at_index(pow(52,5) - 1)) # should get zzzzz
-print(get_password_at_index(266142820)) # should get zzzzy
+print(get_password_at_index(95051009*3)) # should get zzzzy
 
 def increment_string(string):
     char_list = list(string)
@@ -55,4 +55,4 @@ def increment_string(string):
             final_string_char_list.append(chr(num -26  + 97))
     return "".join(final_string_char_list)
 
-print(increment_string("AAAzz"))
+# print(increment_string("AAAzz"))

@@ -46,6 +46,84 @@ clearInterval(some_number) // some_number is generated via calling above command
 ## With loss
 Please refer to GENI TCP lab.
 
+## Graph to produce
+### #request/second vs. Average response time (with x # of worker nodes)
+We should produce 4 different plots for each number of worker nodes. We need to use four testing functions.
 
+One worker
+```javascript
+function one() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', '/hun8BuxtTyOqQZRVo0PcQ=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+```
+Two workers
+```javascript
+function one() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', '/hun8BuxtTyOqQZRVo0PcQ=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+
+function two() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', 'Q5rz8L0cMBhz/bFu4J8j3A=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+```
+Three workers
+```javascript
+function one() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', '/hun8BuxtTyOqQZRVo0PcQ=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+
+function two() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', 'tAMvjAdpAUQzwwkqg3/bAg=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+
+function three() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', 'ocXVKZnmNfiqVRx98a74AQ=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+```
+Four workers
+```javascript
+function one() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', '/hun8BuxtTyOqQZRVo0PcQ=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+
+function two() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', 'Un9AjYn5CMsncOv07Lp4iA=='); 
+    fetch('/api/processform', {method: 'post', body: data})
+}
+
+function three() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', 'KGU3NqLAupqzHpW1P6L0Eg==');
+    fetch('/api/processform', {method: 'post', body: data})
+}
+
+function four() {
+    const data = new URLSearchParams(); 
+    data.append('md5hash', 'QBXSQnhLdnKIzqFxzVIqbA=='); // replace with any hash you like
+    fetch('/api/processform', {method: 'post', body: data})
+}
+```
+***Note*** #requests/second = sum of #requests/second of all functions in each scenario.
+
+### #workers vs. Average response time
+I think this graph is unecessary so we should ignore it.
+
+### rate of loss vs. Average response time (Pick any number of worker nodes you like)
+Refer to GENI TCP Lab
 
 
