@@ -60,7 +60,7 @@ async function sendRequest(md5hash) {
                 } else {
                     const totalTime = Date.now() - beginTime
                     console.log(totalTime)
-                    fs.appendFile('time.txt', totalTime.toString(), (err) => {
+                    fs.appendFile('time.txt', totalTime.toString() + "\r\n", (err) => {
                         if (err) throw err
                     })
                     resolve(line)

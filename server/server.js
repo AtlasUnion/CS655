@@ -41,6 +41,7 @@ var bodyParser = require("body-parser");
 var net = require("net");
 var carrier = require("carrier");
 var readline = require("readline");
+var fs = require("fs");
 var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"];
 var num_worker_to_use = 1;
 var worker_port = 1338; // TODO: change actual port
@@ -91,6 +92,10 @@ function sendRequest(md5hash) {
                             else {
                                 var totalTime = Date.now() - beginTime;
                                 console.log(totalTime);
+                                fs.appendFile('time.txt', totalTime.toString() + "\r\n", function (err) {
+                                    if (err)
+                                        throw err;
+                                });
                                 resolve(line);
                             }
                         });
