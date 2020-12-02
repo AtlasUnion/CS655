@@ -5,7 +5,7 @@ import * as net from "net"
 import * as carrier from "carrier"
 import * as readline from "readline"
 
-var worker_ips = ["127.0.0.1"]
+var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"]
 var num_worker_to_use = 1
 const worker_port = 1338 // TODO: change actual port
 const total_search_space = 52**5
