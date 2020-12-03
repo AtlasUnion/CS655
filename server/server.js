@@ -46,8 +46,9 @@ var output_filename = process.argv[2];
 // var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"]
 var worker_ips = ["127.0.0.1"];
 var num_worker_to_use = 1;
-var worker_port = 1338; // TODO: change actual port
+var worker_port = 1338;
 var total_search_space = Math.pow(52, 5);
+var num_of_pieces = 400;
 var app = express();
 app.listen(8080, function () {
     console.log("Server listening...");
@@ -73,13 +74,12 @@ function sendRequest(md5hash) {
         return __generator(this, function (_a) {
             return [2 /*return*/, new Promise(function (resolve, reject) {
                     var length_of_search_for_each_worker = total_search_space / num_worker_to_use;
+                    var piece_counter = 0;
+                    var found_password = 0;
                     var _loop_1 = function () {
-                        start_index = (i * length_of_search_for_each_worker).toString();
-                        end_index = ((i + 1) * length_of_search_for_each_worker).toString();
-                        if (i == num_worker_to_use - 1) {
-                            start_index = (i * length_of_search_for_each_worker).toString();
-                            end_index = total_search_space.toString();
-                        }
+                        start_index = Math.floor((piece_counter) / num_of_pieces * total_search_space);
+                        end_index = Math.floor((piece_counter + 1) / num_of_pieces * total_search_space);
+                        piece_counter++;
                         string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
                         socket = new net.Socket();
                         socket.connect(worker_port, worker_ips[i], function () { });
@@ -87,8 +87,9 @@ function sendRequest(md5hash) {
                         socket.write(string_to_be_send);
                         my_carrier = carrier.carry(socket);
                         my_carrier.on('line', function (line) {
+                            // check result
                             if (line == "Fail to find password") {
-                                socket.destroy();
+                                // do nothing
                             }
                             else {
                                 var totalTime = Date.now() - beginTime;
@@ -97,7 +98,21 @@ function sendRequest(md5hash) {
                                     if (err)
                                         throw err;
                                 });
+                                found_password = 1;
                                 resolve(line);
+                            }
+                            // send more piece if any and have not found password
+                            if ((piece_counter != num_of_pieces) && (found_password != 1)) {
+                                start_index = Math.floor((piece_counter) / num_of_pieces * total_search_space);
+                                end_index = Math.floor((piece_counter + 1) / num_of_pieces * total_search_space);
+                                piece_counter++;
+                                var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
+                                socket.write(string_to_be_send);
+                            }
+                            else {
+                                socket.write("Closing Connection\n");
+                                console.log("Connection closed");
+                                socket.destroy();
                             }
                         });
                     };

@@ -94,11 +94,15 @@ def Main(client, connection):
     ip = connection[0]
     port = connection[1]
     print(f"Connection from {ip} on port {port}")
-    data = client.recv(1024)
-    if data[-1:] == b'\n':
-        crack(data[:-1].decode(), client)
-    client.close()
-    print(f"Closed connection with {ip} on port {port}")
+    while True:
+        data = client.recv(1024)
+        data_str = data.decode("utf-8")
+        if (data_str == "Closing Connection\n"):
+            client.close()
+            print(f"Closed connection with {ip} on port {port}")
+            break
+        else: 
+            crack(data[:-1].decode(), client)
         
         
 # Create a TCP/IP socket
