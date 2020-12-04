@@ -21,7 +21,7 @@ sudo apt-get install -y nodejs
 ```
 Then you have to install tsc
 ```shell
-npm install typescript --save-dev
+npm install typescript -g
 ```
 
 python should already be avaliable on the node.
