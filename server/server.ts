@@ -7,7 +7,8 @@ import * as readline from "readline"
 import * as fs from "fs"
 
 var output_filename = process.argv[2]
-var worker_ips = ["10.10.0.2", "10.10.1.2", "10.10.2.2", "10.10.3.2", "10.10.4.2", "10.10.5.2", "10.10.6.2", "10.10.7.2", "10.10.8.2", "10.10.9.2"]
+var worker_ips = ["10.10.0.2", "10.10.1.2", "10.10.2.2", "10.10.3.2", "10.10.4.2"] 
+//"10.10.5.2", "10.10.6.2", "10.10.7.2", "10.10.8.2", "10.10.9.2"]
 var num_worker_to_use = 1
 const worker_port = 1338
 const total_search_space = 52**5
