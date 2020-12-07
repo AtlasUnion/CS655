@@ -43,7 +43,6 @@ var carrier = require("carrier");
 var readline = require("readline");
 var fs = require("fs");
 var output_filename = process.argv[2];
-// var worker_ips = ["172.17.1.9", "172.17.1.10", "172.17.1.11", "172.17.1.12"]
 var worker_ips = ["127.0.0.1"];
 var num_worker_to_use = 1;
 var worker_port = 1338;
