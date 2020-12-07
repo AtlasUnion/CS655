@@ -12,10 +12,20 @@ import math
 import base64
 import threading
 from _thread import start_new_thread
+import io
 
 # Some threading code from 
     # https://www.geeksforgeeks.org/socket-programming-multi-threading-python/
     # https://www.youtube.com/watch?v=FKlmAkEb40s
+
+class SocketIO(io.RawIOBase):
+    def __init__(self, sock):
+        self.sock = sock
+    def read(self, sz=-1):
+        if (sz == -1): sz=0x7FFFFFFF
+        return self.sock.recv(sz)
+    def seekable(self):
+        return False
 
 
 print_lock = threading.Lock() 
@@ -94,15 +104,13 @@ def Main(client, connection):
     ip = connection[0]
     port = connection[1]
     print(f"Connection from {ip} on port {port}")
-    while True:
-        data = client.recv(1024)
-        data_str = data.decode("utf-8")
-        if (data_str == "Closing Connection\n"):
+    fd = SocketIO(client)
+    for line in fd:
+        if (line.decode() == "Closing Connection\n"):
             client.close()
-            print(f"Closed connection with {ip} on port {port}")
             break
-        else: 
-            crack(data[:-1].decode(), client)
+        else:
+            crack(line[:-1].decode(), client)
         
         
 # Create a TCP/IP socket
