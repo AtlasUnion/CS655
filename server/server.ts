@@ -61,7 +61,7 @@ async function sendRequest(md5hash) {
             my_carrier.on('line', (line) => {
 
                 // check result
-                if (line == "Fail to find password") {
+                if (line == "Fail to find password\n") {
                     // do nothing
                 } else {
                     const totalTime = Date.now() - beginTime
