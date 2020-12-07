@@ -107,6 +107,7 @@ def Main(client, connection):
     fd = SocketIO(client)
     for line in fd:
         if (line.decode() == "Closing Connection\n"):
+            print("Close Connection\n")
             client.close()
             break
         else:
