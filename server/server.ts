@@ -46,6 +46,8 @@ async function sendRequest(md5hash) {
         const length_of_search_for_each_worker = total_search_space/num_worker_to_use;
         var piece_counter = 0
         var found_password = 0
+        var socket_list = []
+        var carrier_list = []
         for (var i = 0; i < num_worker_to_use; i++) {
 
             var start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space)
@@ -58,7 +60,7 @@ async function sendRequest(md5hash) {
             const beginTime = Date.now()
             socket.write(string_to_be_send)
             var my_carrier = carrier.carry(socket)
-            my_carrier.on('line', (line) => {
+            my_carrier.on('line', (line, number) => {
 
                 // check result
                 if (line == "Fail to find password") {
