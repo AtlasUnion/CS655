@@ -87,7 +87,7 @@ function sendRequest(md5hash) {
                         my_carrier = carrier.carry(socket);
                         my_carrier.on('line', function (line) {
                             // check result
-                            if (line == "Fail to find password") {
+                            if (line == "Fail to find password\n") {
                                 // do nothing
                             }
                             else {
