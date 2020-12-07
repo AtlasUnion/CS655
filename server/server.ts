@@ -7,12 +7,11 @@ import * as readline from "readline"
 import * as fs from "fs"
 
 var output_filename = process.argv[2]
-var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1"] 
-//"10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
+var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
 var num_worker_to_use = 1
 const worker_port = 1338
 const total_search_space = 52**5
-const num_of_pieces = 400
+const num_of_pieces = 500
 
 const app = express()
 app.listen(8080, () => {
