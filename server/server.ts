@@ -7,7 +7,8 @@ import * as readline from "readline"
 import * as fs from "fs"
 
 var output_filename = process.argv[2]
-var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
+// var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
+var worker_ips = ["127.0.0.1"]
 var num_worker_to_use = 1
 const worker_port = 1338
 const total_search_space = 52**5
@@ -56,11 +57,14 @@ async function sendRequest(md5hash) {
 
             var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
             var socket = new net.Socket()
-            socket.connect(worker_port, worker_ips[i], () => {})
+            socket_list.push(socket)
+            socket_list[i].connect(worker_port, worker_ips[i], () => {})
             const beginTime = Date.now()
-            socket.write(string_to_be_send)
-            var my_carrier = carrier.carry(socket)
-            my_carrier.on('line', (line, number) => {
+            socket_list[i].write(string_to_be_send)
+            var my_carrier = carrier.carry(socket_list[i])
+            carrier_list.push(my_carrier)
+            var j = i
+            carrier_list[i].on('line', (line) => {
 
                 // check result
                 if (line == "Fail to find password") {
@@ -82,11 +86,12 @@ async function sendRequest(md5hash) {
                     piece_counter++
 
                     var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
-                    socket.write(string_to_be_send)
+                    socket_list[j].write(string_to_be_send)
                 } else {
-                    socket.write("Closing Connection\n")
+                    console.log(j)
+                    socket_list[j].write("Closing Connection\n")
                     console.log("Connection closed")
-                    socket.destroy()
+                    socket_list[j].destroy()
                 }
             })
         }

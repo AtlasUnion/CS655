@@ -43,7 +43,8 @@ var carrier = require("carrier");
 var readline = require("readline");
 var fs = require("fs");
 var output_filename = process.argv[2];
-var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"];
+// var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
+var worker_ips = ["127.0.0.1"];
 var num_worker_to_use = 1;
 var worker_port = 1338;
 var total_search_space = Math.pow(52, 5);
@@ -75,17 +76,22 @@ function sendRequest(md5hash) {
                     var length_of_search_for_each_worker = total_search_space / num_worker_to_use;
                     var piece_counter = 0;
                     var found_password = 0;
+                    var socket_list = [];
+                    var carrier_list = [];
                     var _loop_1 = function () {
                         start_index = Math.floor((piece_counter) / num_of_pieces * total_search_space);
                         end_index = Math.floor((piece_counter + 1) / num_of_pieces * total_search_space);
                         piece_counter++;
                         string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
                         socket = new net.Socket();
-                        socket.connect(worker_port, worker_ips[i], function () { });
+                        socket_list.push(socket);
+                        socket_list[i].connect(worker_port, worker_ips[i], function () { });
                         var beginTime = Date.now();
-                        socket.write(string_to_be_send);
-                        my_carrier = carrier.carry(socket);
-                        my_carrier.on('line', function (line) {
+                        socket_list[i].write(string_to_be_send);
+                        my_carrier = carrier.carry(socket_list[i]);
+                        carrier_list.push(my_carrier);
+                        j = i;
+                        carrier_list[i].on('line', function (line) {
                             // check result
                             if (line == "Fail to find password") {
                                 // do nothing
@@ -106,16 +112,17 @@ function sendRequest(md5hash) {
                                 end_index = Math.floor((piece_counter + 1) / num_of_pieces * total_search_space);
                                 piece_counter++;
                                 var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n";
-                                socket.write(string_to_be_send);
+                                socket_list[j].write(string_to_be_send);
                             }
                             else {
-                                socket.write("Closing Connection\n");
+                                console.log(j);
+                                socket_list[j].write("Closing Connection\n");
                                 console.log("Connection closed");
-                                socket.destroy();
+                                socket_list[j].destroy();
                             }
                         });
                     };
-                    var start_index, end_index, string_to_be_send, socket, my_carrier;
+                    var start_index, end_index, string_to_be_send, socket, my_carrier, j;
                     for (var i = 0; i < num_worker_to_use; i++) {
                         _loop_1();
                     }
