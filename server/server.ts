@@ -6,10 +6,10 @@ import * as carrier from "carrier"
 import * as readline from "readline"
 import * as fs from "fs"
 
-var output_filename = process.argv[2]
-var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
-// var worker_ips = ["127.0.0.1"]
-var num_worker_to_use = 1
+let output_filename = process.argv[2]
+let worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
+// let worker_ips = ["127.0.0.1"]
+let num_worker_to_use = 1
 const worker_port = 1338
 const total_search_space = 52**5
 const num_of_pieces = 1000
@@ -40,44 +40,32 @@ app.post('/api/processform', (req, res) => {
     })
 })
 
-let gctr = 0
-const tag = new Map<net.Socket, [number, string]>()
-const dataSent = new Map<net.Socket, [number, any][]>()
-const dataReceived = new Map<net.Socket, [number, any][]>()
-const sktConnection = new Map<net.Socket, [number, string]>()
 
 let sktCtr = 0
 const sktNumber = new WeakMap<net.Socket, number>()
 
 async function sendRequest(md5hash) {
 
-    setTimeout(x => {console.log(tag, dataSent, dataReceived, sktConnection)}, 20000)
-
     return new Promise((resolve, reject) => {
         const length_of_search_for_each_worker = total_search_space/num_worker_to_use;
-        var piece_counter = 0
-        var found_password = 0
-        for (var i = 0; i < num_worker_to_use; i++) {
+        let piece_counter = 0
+        let found_password = 0
+        for (let i = 0; i < num_worker_to_use; i++) {
 
-            var start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space)
-            var end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
+            let start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space)
+            let end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
             piece_counter++
 
-            var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
-            var socket = new net.Socket()
+            let string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
+            let socket = new net.Socket()
             if("debug") {
                 sktNumber.set(socket, sktCtr++)
-                tag.set(socket, [gctr++, "This is the " + i +"th socket created within the for loop"])
-                dataSent.set(socket, [])
-                dataReceived.set(socket, [])
-                sktConnection.set(socket, [gctr++, "This socket is connected to " + worker_ips[i] + ":" + worker_port + "."])
             }
             socket.connect(worker_port, worker_ips[i], () => {
                 const beginTime = Date.now()
                 socket.write(string_to_be_send)
                 console.log("Socket #" + sktNumber.get(socket) + " is writing " + string_to_be_send)
-                dataSent.get(socket).push([gctr++, string_to_be_send])
-                var my_carrier = carrier.carry(socket)
+                let my_carrier = carrier.carry(socket)
                 // my_carrier.on('line', (line) => {
     
                 //     // check result
@@ -99,7 +87,7 @@ async function sendRequest(md5hash) {
                 //         end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
                 //         piece_counter++
     
-                //         var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
+                //         let string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
                 //         socket.write(string_to_be_send)
                 //     } else {
                 //         socket.write("Closing Connection\n")
@@ -107,8 +95,8 @@ async function sendRequest(md5hash) {
                 //         socket.destroy()
                 //     }
                 // })
-                var done = 0
-                var j = i
+                let done = 0
+                let j = i
                 socket.on('data', (data) => {
                     console.log("Socket #" + sktNumber.get(socket) + " is getting data: " + data)
                     console.log(j, ":", data)
@@ -118,7 +106,6 @@ async function sendRequest(md5hash) {
                     done = 1
                     socket.write("Hello\n")
                     console.log("Socket #" + sktNumber.get(socket) + " is writing " + "Hello")
-                    dataSent.get(socket).push([gctr++, "Hello\n"])
                 })
             })
         }
@@ -127,14 +114,14 @@ async function sendRequest(md5hash) {
 
 // add/remove workers
 
-var rl = readline.createInterface({
+let rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 })
 
-var changeNumofWorkers = function () {
+let changeNumofWorkers = function () {
     rl.question("Number of workers to use?", function(num) {
-        var requested_num_worker_to_use = parseInt(num)
+        let requested_num_worker_to_use = parseInt(num)
         if (isNaN(requested_num_worker_to_use)) {
             
         } else if ((requested_num_worker_to_use < 1) || (requested_num_worker_to_use > worker_ips.length)) {
