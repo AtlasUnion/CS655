@@ -47,8 +47,6 @@ async function sendRequest(md5hash) {
         const length_of_search_for_each_worker = total_search_space/num_worker_to_use;
         var piece_counter = 0
         var found_password = 0
-        var socket_list = []
-        var carrier_list = []
         for (var i = 0; i < num_worker_to_use; i++) {
 
             var start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space)
@@ -57,42 +55,45 @@ async function sendRequest(md5hash) {
 
             var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
             var socket = new net.Socket()
-            socket_list.push(socket)
-            socket_list[i].connect(worker_port, worker_ips[i], () => {})
+            socket.connect(worker_port, worker_ips[i], () => {})
             const beginTime = Date.now()
-            socket_list[i].write(string_to_be_send)
-            var my_carrier = carrier.carry(socket_list[i])
-            carrier_list.push(my_carrier)
+            socket.write(string_to_be_send)
+            var my_carrier = carrier.carry(socket)
+            // my_carrier.on('line', (line) => {
+
+            //     // check result
+            //     if (line == "Fail to find password") {
+            //         // do nothing
+            //     } else {
+            //         const totalTime = Date.now() - beginTime
+            //         console.log(totalTime)
+            //         fs.appendFile(output_filename, totalTime.toString() + "\r\n", (err) => {
+            //             if (err) throw err
+            //         })
+            //         found_password = 1;
+            //         resolve(line)
+            //     }
+
+            //     // send more piece if any and have not found password
+            //     if ((piece_counter != num_of_pieces) && (found_password != 1)) {
+            //         start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space) 
+            //         end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
+            //         piece_counter++
+
+            //         var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
+            //         socket.write(string_to_be_send)
+            //     } else {
+            //         socket.write("Closing Connection\n")
+            //         console.log("Connection closed")
+            //         socket.destroy()
+            //     }
+            // })
+            var done = 0
             var j = i
-            carrier_list[i].on('line', (line) => {
-
-                // check result
-                if (line == "Fail to find password") {
-                    // do nothing
-                } else {
-                    const totalTime = Date.now() - beginTime
-                    console.log(totalTime)
-                    fs.appendFile(output_filename, totalTime.toString() + "\r\n", (err) => {
-                        if (err) throw err
-                    })
-                    found_password = 1;
-                    resolve(line)
-                }
-
-                // send more piece if any and have not found password
-                if ((piece_counter != num_of_pieces) && (found_password != 1)) {
-                    start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space) 
-                    end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
-                    piece_counter++
-
-                    var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
-                    socket_list[j].write(string_to_be_send)
-                } else {
-                    console.log(j)
-                    socket_list[j].write("Closing Connection\n")
-                    console.log("Connection closed")
-                    socket_list[j].destroy()
-                }
+            socket.on('data', (data) => {
+                console.log(j, ":", data)
+                done = 1
+                socket.write("Hello\n")
             })
         }
     })
