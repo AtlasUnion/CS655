@@ -111,9 +111,9 @@ def Main(client, connection):
             client.close()
             break
         else:
-            # crack(line[:-1].decode(), client)
-            print(line.decode())
-            connection.sendall(b"Fail to find password\n")
+            crack(line[:-1].decode(), client)
+            # print(line.decode())
+            # client.sendall(b"Fail to find password\n")
         
         
 # Create a TCP/IP socket
