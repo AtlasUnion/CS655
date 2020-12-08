@@ -41,9 +41,6 @@ app.post('/api/processform', (req, res) => {
 })
 
 
-let sktCtr = 0
-const sktNumber = new WeakMap<net.Socket, number>()
-
 async function sendRequest(md5hash) {
 
     return new Promise((resolve, reject) => {
@@ -58,54 +55,39 @@ async function sendRequest(md5hash) {
 
             let string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
             let socket = new net.Socket()
-            if("debug") {
-                sktNumber.set(socket, sktCtr++)
-            }
+
             socket.connect(worker_port, worker_ips[i], () => {
                 const beginTime = Date.now()
                 socket.write(string_to_be_send)
-                console.log("Socket #" + sktNumber.get(socket) + " is writing " + string_to_be_send)
                 let my_carrier = carrier.carry(socket)
-                // my_carrier.on('line', (line) => {
+                my_carrier.on('line', (line) => {
     
-                //     // check result
-                //     if (line == "Fail to find password") {
-                //         // do nothing
-                //     } else {
-                //         const totalTime = Date.now() - beginTime
-                //         console.log(totalTime)
-                //         fs.appendFile(output_filename, totalTime.toString() + "\r\n", (err) => {
-                //             if (err) throw err
-                //         })
-                //         found_password = 1;
-                //         resolve(line)
-                //     }
-    
-                //     // send more piece if any and have not found password
-                //     if ((piece_counter != num_of_pieces) && (found_password != 1)) {
-                //         start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space) 
-                //         end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
-                //         piece_counter++
-    
-                //         let string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
-                //         socket.write(string_to_be_send)
-                //     } else {
-                //         socket.write("Closing Connection\n")
-                //         console.log("Connection closed")
-                //         socket.destroy()
-                //     }
-                // })
-                let done = 0
-                let j = i
-                socket.on('data', (data) => {
-                    console.log("Socket #" + sktNumber.get(socket) + " is getting data: " + data)
-                    console.log(j, ":", data)
-                    if (done == 1) {
-                        return
+                    // check result
+                    if (line == "Fail to find password") {
+                        // do nothing
+                    } else {
+                        const totalTime = Date.now() - beginTime
+                        console.log(totalTime)
+                        fs.appendFile(output_filename, totalTime.toString() + "\r\n", (err) => {
+                            if (err) throw err
+                        })
+                        found_password = 1;
+                        resolve(line)
                     }
-                    done = 1
-                    socket.write("Hello\n")
-                    console.log("Socket #" + sktNumber.get(socket) + " is writing " + "Hello")
+    
+                    // send more piece if any and have not found password
+                    if ((piece_counter != num_of_pieces) && (found_password != 1)) {
+                        start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space) 
+                        end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
+                        piece_counter++
+    
+                        let string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
+                        socket.write(string_to_be_send)
+                    } else {
+                        socket.write("Closing Connection\n")
+                        console.log("Connection closed")
+                        socket.destroy()
+                    }
                 })
             })
         }
