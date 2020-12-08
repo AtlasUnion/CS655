@@ -12,7 +12,7 @@ passwords =[]
 def get_random_string(length):
     letters = string.ascii_lowercase + string.ascii_uppercase
     result_str = ''.join(random.choice(letters) for i in range(length))
-    passwords.append( 'A' + result_str)
+    passwords.append( "A" + result_str)
 
 
 for i in range(1000):
