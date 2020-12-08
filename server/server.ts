@@ -92,6 +92,9 @@ async function sendRequest(md5hash) {
             var j = i
             socket.on('data', (data) => {
                 console.log(j, ":", data)
+                if (done == 1) {
+                    return
+                }
                 done = 1
                 socket.write("Hello\n")
             })
