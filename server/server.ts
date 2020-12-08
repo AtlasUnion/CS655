@@ -7,8 +7,8 @@ import * as readline from "readline"
 import * as fs from "fs"
 
 var output_filename = process.argv[2]
-// var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
-var worker_ips = ["127.0.0.1"]
+var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1", "10.10.5.1", "10.10.6.1", "10.10.7.1", "10.10.8.1", "10.10.9.1"]
+// var worker_ips = ["127.0.0.1"]
 var num_worker_to_use = 1
 const worker_port = 1338
 const total_search_space = 52**5
@@ -40,8 +40,15 @@ app.post('/api/processform', (req, res) => {
     })
 })
 
+let gctr = 0
+const tag = new Map<net.Socket, [number, string]>()
+const dataSent = new Map<net.Socket, [number, any][]>()
+const dataReceived = new Map<net.Socket, [number, any][]>()
+const sktConnection = new Map<net.Socket, [number, string]>()
 
 async function sendRequest(md5hash) {
+
+    setTimeout(x => {console.log(tag, dataSent, dataReceived, sktConnection)}, 20000)
 
     return new Promise((resolve, reject) => {
         const length_of_search_for_each_worker = total_search_space/num_worker_to_use;
@@ -55,48 +62,58 @@ async function sendRequest(md5hash) {
 
             var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
             var socket = new net.Socket()
-            socket.connect(worker_port, worker_ips[i], () => {})
-            const beginTime = Date.now()
-            socket.write(string_to_be_send)
-            var my_carrier = carrier.carry(socket)
-            // my_carrier.on('line', (line) => {
-
-            //     // check result
-            //     if (line == "Fail to find password") {
-            //         // do nothing
-            //     } else {
-            //         const totalTime = Date.now() - beginTime
-            //         console.log(totalTime)
-            //         fs.appendFile(output_filename, totalTime.toString() + "\r\n", (err) => {
-            //             if (err) throw err
-            //         })
-            //         found_password = 1;
-            //         resolve(line)
-            //     }
-
-            //     // send more piece if any and have not found password
-            //     if ((piece_counter != num_of_pieces) && (found_password != 1)) {
-            //         start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space) 
-            //         end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
-            //         piece_counter++
-
-            //         var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
-            //         socket.write(string_to_be_send)
-            //     } else {
-            //         socket.write("Closing Connection\n")
-            //         console.log("Connection closed")
-            //         socket.destroy()
-            //     }
-            // })
-            var done = 0
-            var j = i
-            socket.on('data', (data) => {
-                console.log(j, ":", data)
-                if (done == 1) {
-                    return
-                }
-                done = 1
-                socket.write("Hello\n")
+            if("debug") {
+                tag.set(socket, [gctr++, "This is the " + i +"th socket created within the for loop"])
+                dataSent.set(socket, [])
+                dataReceived.set(socket, [])
+                sktConnection.set(socket, [gctr++, "This socket is connected to " + worker_ips[i] + ":" + worker_port + "."])
+            }
+            socket.connect(worker_port, worker_ips[i], () => {
+                const beginTime = Date.now()
+                socket.write(string_to_be_send)
+                dataSent.get(socket).push([gctr++, string_to_be_send])
+                var my_carrier = carrier.carry(socket)
+                // my_carrier.on('line', (line) => {
+    
+                //     // check result
+                //     if (line == "Fail to find password") {
+                //         // do nothing
+                //     } else {
+                //         const totalTime = Date.now() - beginTime
+                //         console.log(totalTime)
+                //         fs.appendFile(output_filename, totalTime.toString() + "\r\n", (err) => {
+                //             if (err) throw err
+                //         })
+                //         found_password = 1;
+                //         resolve(line)
+                //     }
+    
+                //     // send more piece if any and have not found password
+                //     if ((piece_counter != num_of_pieces) && (found_password != 1)) {
+                //         start_index = Math.floor((piece_counter)/num_of_pieces * total_search_space) 
+                //         end_index = Math.floor((piece_counter + 1)/num_of_pieces * total_search_space)
+                //         piece_counter++
+    
+                //         var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
+                //         socket.write(string_to_be_send)
+                //     } else {
+                //         socket.write("Closing Connection\n")
+                //         console.log("Connection closed")
+                //         socket.destroy()
+                //     }
+                // })
+                var done = 0
+                var j = i
+                socket.on('data', (data) => {
+                    
+                    console.log(j, ":", data)
+                    if (done == 1) {
+                        return
+                    }
+                    done = 1
+                    socket.write("Hello\n")
+                    dataSent.get(socket).push([gctr++, "Hello\n"])
+                })
             })
         }
     })
