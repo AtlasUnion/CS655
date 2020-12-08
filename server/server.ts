@@ -46,6 +46,9 @@ const dataSent = new Map<net.Socket, [number, any][]>()
 const dataReceived = new Map<net.Socket, [number, any][]>()
 const sktConnection = new Map<net.Socket, [number, string]>()
 
+let sktCtr = 0
+const sktNumber = new WeakMap<net.Socket, number>()
+
 async function sendRequest(md5hash) {
 
     setTimeout(x => {console.log(tag, dataSent, dataReceived, sktConnection)}, 20000)
@@ -63,6 +66,7 @@ async function sendRequest(md5hash) {
             var string_to_be_send = "{'hash': b'" + md5hash + "', 'index': [" + start_index + "," + end_index + "]}\n"
             var socket = new net.Socket()
             if("debug") {
+                sktNumber.set(socket, sktCtr++)
                 tag.set(socket, [gctr++, "This is the " + i +"th socket created within the for loop"])
                 dataSent.set(socket, [])
                 dataReceived.set(socket, [])
@@ -71,6 +75,7 @@ async function sendRequest(md5hash) {
             socket.connect(worker_port, worker_ips[i], () => {
                 const beginTime = Date.now()
                 socket.write(string_to_be_send)
+                console.log("Socket #" + sktNumber.get(socket) + " is writing " + string_to_be_send)
                 dataSent.get(socket).push([gctr++, string_to_be_send])
                 var my_carrier = carrier.carry(socket)
                 // my_carrier.on('line', (line) => {
@@ -105,13 +110,14 @@ async function sendRequest(md5hash) {
                 var done = 0
                 var j = i
                 socket.on('data', (data) => {
-                    
+                    console.log("Socket #" + sktNumber.get(socket) + " is getting data: " + data)
                     console.log(j, ":", data)
                     if (done == 1) {
                         return
                     }
                     done = 1
                     socket.write("Hello\n")
+                    console.log("Socket #" + sktNumber.get(socket) + " is writing " + "Hello")
                     dataSent.get(socket).push([gctr++, "Hello\n"])
                 })
             })
