@@ -59,7 +59,9 @@ c256000w10 <-data.frame(c256000w10, rep(256000, 100), rep(10, 100))
 colnames(c256000w10) <- names
 
 
-df <- rbind(c1000w5, c1000w10, c2000w5, c2000w10, c4000w5, c4000w10, c8000w5, c8000w10, c16000w5, c16000w10, c32000w5, c32000w10)
+#df <- rbind(c1000w5, c1000w10, c2000w5, c2000w10, c4000w5, c4000w10, c8000w5, c8000w10, c16000w5, c16000w10, c32000w5, c32000w10, c64000w5, c64000w10, c128000w5, c128000w10, c256000w5, c256000w10)
+
+df <- rbind(c1000w5, c1000w10, c2000w5, c2000w10, c4000w5, c4000w10, c8000w5, c8000w10, c16000w5, c16000w10, c32000w5, c32000w10, c64000w5, c64000w10)
 
 # for line plot
 data_summary <- function(data, varname, groupnames){
@@ -87,7 +89,14 @@ df$num_servers <- as.factor(df$num_servers)
 # dot plot with colors
 p<-ggplot(df, aes(x=num_chunks, y=time, fill=num_servers))+
   geom_boxplot(position=position_dodge(0.8)) +
-  geom_dotplot(binaxis='y', stackdir='center', binwidth = 1000, position=position_dodge(.8))
+  geom_dotplot(binaxis='y', stackdir='center', binwidth = 1000, position=position_dodge(.8)) +
+  ggtitle("Crack Time by Number of Chunks ") +
+  xlab("Number of Chunks") + ylab("Crack Time (ms)") +
+  labs(fill="Number of \n Servers") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  stat_summary(fun.y=mean, geom="point", shape=18,size=3, color='black', position=position_dodge(.8))
+  stat_summary(fun.y = mean, color = "red", geom = "line", aes(group = num_servers))
+
 p
 
 
@@ -95,8 +104,7 @@ p
 
 
 
-p + stat_summary(fun.y=mean, geom="point", shape=18,
-                 size=3, color="red")
+#p + stat_summary(fun.y=mean, geom="point", shape=18,size=3, color=black, position=position_dodge(.8))
 
 
 # trying with colors
