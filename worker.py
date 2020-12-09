@@ -112,20 +112,20 @@ def Main(client, connection):
             break
         else:
             crack(line[:-1].decode(), client)
-            # print(line.decode())
-            # client.sendall(b"Fail to find password\n")
+
         
         
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-port_num = int(sys.argv[1])
 
-hostname = socket.gethostname()    
-# IPAddr = socket.gethostbyname(hostname)
+if (len(sys.argv) != 3):
+    print("Please supply ip address and port number\n")
+    exit(-1)
 
-IPAddr = 'localhost'  
+IPAddr = sys.argv[1]  
+port_num = int(sys.argv[2])
 
 server_address = (IPAddr, port_num)
 print('Starting up on %s port %s' % server_address, file=sys.stderr)

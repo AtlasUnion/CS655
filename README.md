@@ -3,15 +3,21 @@
 # Design
 ## worker side
 
-Hey, I uploaded the worker in a separate branch. There's another file I was using just for testing, we can remove it from the final build. Currently, the worker expects a message of the form "{'hash': base64_encoded_hash, 'index': [start_index,end_index]}\n". For example, "{'hash': b'/JPSe2O0LRk+fyvduXBZsA==', 'index': [0,250000]}\n" looks for a password that hashes to b'/JPSe2O0LRk+fyvduXBZsA==' and will search passwords from index 0 up to but not including 250000. Format was just something arbitrary and can be easily tweaked, just let me know if you have any changes to it.
+Currently, the worker expects a message of the form "{'hash': base64_encoded_hash, 'index': [start_index,end_index]}\n". For example, "{'hash': b'/JPSe2O0LRk+fyvduXBZsA==', 'index': [0,250000]}\n" looks for a password that hashes to b'/JPSe2O0LRk+fyvduXBZsA==' and will search passwords from index 0 up to but not including 250000.
 
 ## server side expectation for worker
 1. worker should be multi-threaded (otherwise may not be able to handle high volume of request) 
 2. once a worker finish its job, if find a password, send in format: "password\n", if do not find a passsword, send "Fail to find password\n"
 
 # How to deploy code & test
-You need to ssh into each machine and cd into CS665. There are currently 4 workers as I fail to reserve 6-8 workers. (If you feel number of workers not enough, please let me know.)
-## software needed
+You need to ssh into each machine, clone this repo and cd into CS665. 
+## setup.sh
+The script in our repo is used to setup software used in this project on the server node. 
+```
+chmod +x setup.sh
+./setup.sh
+```
+## software needed (if setup.sh does not work)
 You will need nodejs, tsc, git, and python3
 
 You will need to install nodejs on server node:
@@ -21,14 +27,12 @@ sudo apt-get install -y nodejs
 ```
 Then you have to install tsc
 ```shell
-npm install typescript -g
+sudo apt update && sudo apt install node-typescript -y
 ```
 
 python should already be avaliable on the node.
 
-Next step is to clone git repo onto each node.
-
-## How to edit ip lists & How to change chunk size
+## How to edit ip lists & How to change chunk size on server node
 To edit ip lists, open the file "server.ts", you will see the following at line 11:
 ```javascript
 var worker_ips = ["127.0.0.1"]
@@ -37,7 +41,7 @@ Just fill in ips, seperated by ,
 
 To change chunk size, open the file "server.ts", you will see the following at line 14: 
 ```javascript
-const num_of_pieces = 400 // defines how many pieces 52^5 are broken down into
+const num_of_pieces = 400 // defines how many pieces of chunks 52^5 are broken down into
 ```
 
 After you change either list or chunk size, do the following:
@@ -56,9 +60,13 @@ The server should prompt you a question asking for number of workers to use -- t
 
 On worker
 ```sh
-python3 worker.py 1338
+python3 worker.py ip_worker_listen_on 1338
 ```
-on browser: type http://192.171.20.110:8080/ **Be sure to uinput BASE64 MD5 HASH** -- can use the following website: https://approsto.com/md5-generator/
+Worker requires you to input the ip it should listen on. This ip must be the same ip you put in the ip lists on the server node for the worker.
+on browser: type http://192.171.20.110:8080/ **Be sure to input BASE64 MD5 HASH** -- can use the following website to generate hash: https://approsto.com/md5-generator/
+
+## With loss
+To simulate loss, please refer to GENI TCP lab.
 
 
 ### How to test
@@ -79,19 +87,7 @@ Above command can simulate #requests/sec via changing the second parameter. To s
 clearInterval(some_number) // some_number is generated via calling above command
 ```
 
+Above is the skeleton of what we used for testing. The actual testing code is brower_testing_code_bits.js under testing folder.
 
-## With loss
-Please refer to GENI TCP lab.
-
-## Graph to produce
-### #request/second vs. Average response time (with x # of worker nodes)
-We should produce different plots for each number of worker nodes. We need to use four testing functions.
-
-### #workers vs. Average response time
-
-### size of chunks vs. Average response time (for one specific hash?)
-
-### rate of loss vs. Average response time (Pick any number of worker nodes you like)
-Refer to GENI TCP Lab
-
-
+# Demo Video
+https://www.youtube.com/watch?v=rtT_FkC3KCw&feature=youtu.be
