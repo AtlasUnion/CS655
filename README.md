@@ -90,5 +90,9 @@ clearInterval(some_number) // some_number is generated via calling above command
 
 The above is the skeleton of what we used for testing. The actual testing code is in brower_testing_code_bits.js under the testing folder.
 
+# To reproduce our results
+
+We ran each experiment with the same 100 hashes.  In testing > brower_testing_code_bits.js you will find a block of code that you may copy and paste into the browser console of the web server (like the javascript code in "How to test" above) to replicate our experiments.  R code for producing the figures may be found in the figures folder.
+
 # Demo Video
 https://www.youtube.com/watch?v=rtT_FkC3KCw&feature=youtu.be
