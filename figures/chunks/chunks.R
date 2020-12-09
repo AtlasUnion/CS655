@@ -41,16 +41,6 @@ c32000w10 <-data.frame(c32000w10, rep(32000, 100), rep(10, 100))
 colnames(c32000w10) <- names
 
 df <- rbind(c1000w5, c1000w10, c2000w5, c2000w10, c4000w5, c4000w10, c8000w5, c8000w10, c16000w5, c16000w10, c32000w5, c32000w10)
-#df$freq <- as.factor(df$freq
-#df$num_servers <- as.factor(df$num_servers)
-
-
-# Basic dot plot
-p<-ggplot(df, aes(x=freq, y=time)) + 
-  geom_dotplot(binaxis='y', stackdir='center', binwidth = 2000)
-p
-p + stat_summary(fun.y=mean, geom="point", shape=18,
-                 size=3, color="red")
 
 data_summary <- function(data, varname, groupnames){
   require(plyr)
@@ -64,12 +54,24 @@ data_summary <- function(data, varname, groupnames){
   return(data_sum)
 }
 
-
 df2 <- data_summary(df, varname="time", 
-                    groupnames=c("num_servers", "freq"))
+                    groupnames=c("num_servers", "num_chunks"))
 # Convert dose to a factor variable
-df2$freq=as.factor(df2$freq)
+df2$num_chunks=as.factor(df2$num_chunks)
 head(df2)
+
+df$freq <- as.factor(df$num_chunks)
+df$num_servers <- as.factor(df$num_servers)
+
+# Basic dot plot
+p<-ggplot(df, aes(x=freq, y=time)) + 
+  geom_dotplot(binaxis='y', stackdir='center', binwidth = 2000)
+p
+p + stat_summary(fun.y=mean, geom="point", shape=18,
+                 size=3, color="red")
+
+
+
 
 
 p<- ggplot(df2, aes(x=freq, y=time, group=num_servers, color=num_servers)) + 
