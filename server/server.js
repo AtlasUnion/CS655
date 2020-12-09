@@ -48,7 +48,7 @@ var worker_ips = ["10.10.0.1", "10.10.1.1", "10.10.2.1", "10.10.3.1", "10.10.4.1
 var num_worker_to_use = 1;
 var worker_port = 1338;
 var total_search_space = Math.pow(52, 5);
-var num_of_pieces = 16000;
+var num_of_pieces = 32000;
 var app = express();
 app.listen(8080, function () {
     console.log("Server listening...");
