@@ -1,5 +1,5 @@
 // public ip address, listening on port: 192.170.230.102:8080
-var i = 38;
+var i = 0;
 function y(hashlist) {
     const data = new URLSearchParams(); 
     data.append('md5hash', hashlist[i]); // hashling is the variable

@@ -32,9 +32,7 @@ npm install typescript -g
 
 python should already be avaliable on the node.
 
-Next step is to clone git repo onto each node.
-
-## How to edit ip lists & How to change chunk size
+## How to edit ip lists & How to change chunk size on server node
 To edit ip lists, open the file "server.ts", you will see the following at line 11:
 ```javascript
 var worker_ips = ["127.0.0.1"]
