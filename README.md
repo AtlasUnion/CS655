@@ -88,3 +88,6 @@ clearInterval(some_number) // some_number is generated via calling above command
 ```
 
 Above is the skeleton of what we used for testing. The actual testing code is brower_testing_code_bits.js under testing folder.
+
+# Demo Video
+https://www.youtube.com/watch?v=rtT_FkC3KCw&feature=youtu.be
