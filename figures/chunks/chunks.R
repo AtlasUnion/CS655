@@ -13,6 +13,12 @@ c16000w5 <- read.csv("chunk16000w5", header=FALSE)
 c16000w10 <- read.csv("chunk16000w10", header=FALSE)
 c32000w5 <- read.csv("chunk32000w5", header=FALSE)
 c32000w10 <- read.csv("chunk32000w10", header=FALSE)
+c64000w5 <- read.csv("chunk64000w5", header=FALSE)
+c64000w10 <- read.csv("chunk64000w10", header=FALSE)
+c128000w5 <- read.csv("chunk128w5", header=FALSE)
+c128000w10 <- read.csv("chunk128w10", header=FALSE)
+c256000w5 <- read.csv("chunk256w5", header=FALSE)
+c256000w10 <- read.csv("chunk256w10", header=FALSE)
 
 names <- c('time','num_chunks', 'num_servers')
 c1000w5 <-data.frame(c1000w5, rep(1000, 100), rep(5, 100))
@@ -39,9 +45,23 @@ c32000w5 <-data.frame(c32000w5, rep(32000, 100), rep(5, 100))
 colnames(c32000w5) <- names
 c32000w10 <-data.frame(c32000w10, rep(32000, 100), rep(10, 100))
 colnames(c32000w10) <- names
+c64000w5 <-data.frame(c64000w5, rep(64000, 100), rep(5, 100))
+colnames(c64000w5) <- names
+c64000w10 <-data.frame(c64000w10, rep(64000, 100), rep(10, 100))
+colnames(c64000w10) <- names
+c128000w5 <-data.frame(c128000w5, rep(128000, 100), rep(5, 100))
+colnames(c128000w5) <- names
+c128000w10 <-data.frame(c128000w10, rep(128000, 100), rep(10, 100))
+colnames(c128000w10) <- names
+c256000w5 <-data.frame(c256000w5, rep(256000, 100), rep(5, 100))
+colnames(c256000w5) <- names
+c256000w10 <-data.frame(c256000w10, rep(256000, 100), rep(10, 100))
+colnames(c256000w10) <- names
+
 
 df <- rbind(c1000w5, c1000w10, c2000w5, c2000w10, c4000w5, c4000w10, c8000w5, c8000w10, c16000w5, c16000w10, c32000w5, c32000w10)
 
+# for line plot
 data_summary <- function(data, varname, groupnames){
   require(plyr)
   summary_func <- function(x, col){
@@ -54,27 +74,38 @@ data_summary <- function(data, varname, groupnames){
   return(data_sum)
 }
 
+# df2 for line plot
 df2 <- data_summary(df, varname="time", 
                     groupnames=c("num_servers", "num_chunks"))
 # Convert dose to a factor variable
 df2$num_chunks=as.factor(df2$num_chunks)
 head(df2)
 
-df$freq <- as.factor(df$num_chunks)
+df$num_chunks <- as.factor(df$num_chunks)
 df$num_servers <- as.factor(df$num_servers)
 
-# Basic dot plot
-p<-ggplot(df, aes(x=freq, y=time)) + 
-  geom_dotplot(binaxis='y', stackdir='center', binwidth = 2000)
+# dot plot with colors
+p<-ggplot(df, aes(x=num_chunks, y=time, fill=num_servers))+
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(binaxis='y', stackdir='center', binwidth = 1000, position=position_dodge(.8))
 p
+
+
+
+
+
+
 p + stat_summary(fun.y=mean, geom="point", shape=18,
                  size=3, color="red")
 
 
+# trying with colors
+p <- ggplot(df, aes(x=num_chunks, y=time, group=num_servers, color=num_servers)) +
+  geom_dotplot(binaxis='y', stackdir='center')
 
+p
 
-
-p<- ggplot(df2, aes(x=freq, y=time, group=num_servers, color=num_servers)) + 
+p<- ggplot(df2, aes(x=num_chunks, y=time, group=num_servers, color=num_servers)) + 
   geom_line() +
   geom_point()+
   geom_errorbar(aes(ymin=time-sd, ymax=time+sd), width=.2,
