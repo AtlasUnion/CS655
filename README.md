@@ -63,7 +63,7 @@ On worker
 python3 worker.py ip_worker_listen_on 1338
 ```
 Worker requires you to input the ip it should listen on. This ip must be the same ip you put in the ip lists on the server node for the worker.
-on browser: type http://192.171.20.110:8080/ **Be sure to input BASE64 MD5 HASH** -- can use the following website to generate hash: https://approsto.com/md5-generator/
+on browser: type http://192.170.230.102:8080 **Be sure to input BASE64 MD5 HASH** -- can use the following website to generate hash: https://approsto.com/md5-generator/
 
 ## With loss
 To simulate loss, please refer to GENI TCP lab.
