@@ -27,7 +27,7 @@ sudo apt-get install -y nodejs
 ```
 Then you have to install tsc
 ```shell
-npm install typescript -g
+sudo apt update && sudo apt install node-typescript -y
 ```
 
 python should already be avaliable on the node.
@@ -41,7 +41,7 @@ Just fill in ips, seperated by ,
 
 To change chunk size, open the file "server.ts", you will see the following at line 14: 
 ```javascript
-const num_of_pieces = 400 // defines how many pieces 52^5 are broken down into
+const num_of_pieces = 400 // defines how many pieces of chunks 52^5 are broken down into
 ```
 
 After you change either list or chunk size, do the following:
@@ -60,9 +60,13 @@ The server should prompt you a question asking for number of workers to use -- t
 
 On worker
 ```sh
-python3 worker.py 1338
+python3 worker.py ip_worker_listen_on 1338
 ```
+Worker requires you to input the ip it should listen on. This ip must be the same ip you put in the ip lists on the server node for the worker.
 on browser: type http://192.171.20.110:8080/ **Be sure to input BASE64 MD5 HASH** -- can use the following website to generate hash: https://approsto.com/md5-generator/
+
+## With loss
+To simulate loss, please refer to GENI TCP lab.
 
 
 ### How to test
@@ -83,19 +87,4 @@ Above command can simulate #requests/sec via changing the second parameter. To s
 clearInterval(some_number) // some_number is generated via calling above command
 ```
 
-
-## With loss
-Please refer to GENI TCP lab.
-
-## Graph to produce
-### #request/second vs. Average response time (with x # of worker nodes)
-We should produce different plots for each number of worker nodes. We need to use four testing functions.
-
-### #workers vs. Average response time
-
-### size of chunks vs. Average response time (for one specific hash?)
-
-### rate of loss vs. Average response time (Pick any number of worker nodes you like)
-Refer to GENI TCP Lab
-
-
+Above is the skeleton of what we used for testing. The actual testing code is brower_testing_code_bits.js under testing folder.
