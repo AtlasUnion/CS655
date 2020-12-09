@@ -3,15 +3,21 @@
 # Design
 ## worker side
 
-Hey, I uploaded the worker in a separate branch. There's another file I was using just for testing, we can remove it from the final build. Currently, the worker expects a message of the form "{'hash': base64_encoded_hash, 'index': [start_index,end_index]}\n". For example, "{'hash': b'/JPSe2O0LRk+fyvduXBZsA==', 'index': [0,250000]}\n" looks for a password that hashes to b'/JPSe2O0LRk+fyvduXBZsA==' and will search passwords from index 0 up to but not including 250000. Format was just something arbitrary and can be easily tweaked, just let me know if you have any changes to it.
+Currently, the worker expects a message of the form "{'hash': base64_encoded_hash, 'index': [start_index,end_index]}\n". For example, "{'hash': b'/JPSe2O0LRk+fyvduXBZsA==', 'index': [0,250000]}\n" looks for a password that hashes to b'/JPSe2O0LRk+fyvduXBZsA==' and will search passwords from index 0 up to but not including 250000.
 
 ## server side expectation for worker
 1. worker should be multi-threaded (otherwise may not be able to handle high volume of request) 
 2. once a worker finish its job, if find a password, send in format: "password\n", if do not find a passsword, send "Fail to find password\n"
 
 # How to deploy code & test
-You need to ssh into each machine and cd into CS665. There are currently 4 workers as I fail to reserve 6-8 workers. (If you feel number of workers not enough, please let me know.)
-## software needed
+You need to ssh into each machine, clone this repo and cd into CS665. 
+## setup.sh
+The script in our repo is used to setup software used in this project on the server node. 
+```
+chmod +x setup.sh
+./setup.sh
+```
+## software needed (if setup.sh does not work)
 You will need nodejs, tsc, git, and python3
 
 You will need to install nodejs on server node:
@@ -58,7 +64,7 @@ On worker
 ```sh
 python3 worker.py 1338
 ```
-on browser: type http://192.171.20.110:8080/ **Be sure to uinput BASE64 MD5 HASH** -- can use the following website: https://approsto.com/md5-generator/
+on browser: type http://192.171.20.110:8080/ **Be sure to input BASE64 MD5 HASH** -- can use the following website to generate hash: https://approsto.com/md5-generator/
 
 
 ### How to test
