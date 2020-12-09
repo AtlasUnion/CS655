@@ -11,28 +11,38 @@ c8000w5 <- read.csv("chunk8000w5", header=FALSE)
 c8000w10 <- read.csv("chunk8000w10", header=FALSE)
 c16000w5 <- read.csv("chunk16000w5", header=FALSE)
 c16000w10 <- read.csv("chunk16000w10", header=FALSE)
+c32000w5 <- read.csv("chunk32000w5", header=FALSE)
+c32000w10 <- read.csv("chunk32000w10", header=FALSE)
 
-names <- c('time','freq', 'num_servers')
-r1w5 <-data.frame(r1w5, rep(1, 100), rep(5, 100))
-colnames(r1w5) <- names
-r1w10 <-data.frame(r1w10, rep(1, 100), rep(10, 100))
-colnames(r1w10) <- names
-r10w5 <-data.frame(r10w5, rep(10, 100), rep(5, 100))
-colnames(r10w5) <- names
-r10w10 <-data.frame(r10w10, rep(10, 100), rep(10, 100))
-colnames(r10w10) <- names
-r100w5 <-data.frame(r100w5, rep(100, 100), rep(5, 100))
-colnames(r100w5) <- names
-r100w10 <-data.frame(r100w10, rep(100, 100), rep(10, 100))
-colnames(r100w10) <- names
-r1000w5 <-data.frame(r1000w5, rep(1000, 100), rep(5, 100))
-colnames(r1000w5) <- names
-r1000w10 <-data.frame(r1000w10, rep(1000, 100), rep(10, 100))
-colnames(r1000w10) <- names
+names <- c('time','num_chunks', 'num_servers')
+c1000w5 <-data.frame(c1000w5, rep(1000, 100), rep(5, 100))
+colnames(c1000w5) <- names
+c1000w10 <-data.frame(c1000w10, rep(1000, 100), rep(10, 100))
+colnames(c1000w10) <- names
+c2000w5 <-data.frame(c2000w5, rep(2000, 100), rep(5, 100))
+colnames(c2000w5) <- names
+c2000w10 <-data.frame(c2000w10, rep(2000, 100), rep(10, 100))
+colnames(c2000w10) <- names
+c4000w5 <-data.frame(c4000w5, rep(4000, 100), rep(5, 100))
+colnames(c4000w5) <- names
+c4000w10 <-data.frame(c4000w10, rep(4000, 100), rep(10, 100))
+colnames(c4000w10) <- names
+c8000w5 <-data.frame(c8000w5, rep(8000, 100), rep(5, 100))
+colnames(c8000w5) <- names
+c8000w10 <-data.frame(c8000w10, rep(8000, 100), rep(10, 100))
+colnames(c8000w10) <- names
+c16000w5 <-data.frame(c16000w5, rep(16000, 100), rep(5, 100))
+colnames(c16000w5) <- names
+c16000w10 <-data.frame(c16000w10, rep(16000, 100), rep(10, 100))
+colnames(c16000w10) <- names
+c32000w5 <-data.frame(c32000w5, rep(32000, 100), rep(5, 100))
+colnames(c32000w5) <- names
+c32000w10 <-data.frame(c32000w10, rep(32000, 100), rep(10, 100))
+colnames(c32000w10) <- names
 
-df <- rbind(r1w5, r1w10, r10w5, r10w10, r100w5, r100w10, r1000w5, r1000w10)
-df$freq <- as.factor(df$freq)
-df$num_servers <- as.factor(df$num_servers)
+df <- rbind(c1000w5, c1000w10, c2000w5, c2000w10, c4000w5, c4000w10, c8000w5, c8000w10, c16000w5, c16000w10, c32000w5, c32000w10)
+#df$freq <- as.factor(df$freq
+#df$num_servers <- as.factor(df$num_servers)
 
 
 # Basic dot plot
