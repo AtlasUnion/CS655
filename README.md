@@ -41,7 +41,7 @@ Just fill in IPs, seperated by a ",".
 
 To change the chunk size, open the file "server.ts", you will see the following (or something similar) on line 14: 
 ```javascript
-const num_of_pieces = 400 // defines how many pieces of chunks 52^5 are broken down into
+const num_of_pieces = 32000 // defines how many pieces of chunks 52^5 are broken down into
 ```
 
 After you change either list or chunk size, do the following:
