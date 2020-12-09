@@ -34,39 +34,18 @@ df$freq <- as.factor(df$freq)
 df$num_servers <- as.factor(df$num_servers)
 
 
-# Basic dot plot
-p<-ggplot(df, aes(x=freq, y=time)) + 
-  geom_dotplot(binaxis='y', stackdir='center', binwidth = 2000)
+df$freq <- as.factor(df$freq)
+df$num_servers <- as.factor(df$num_servers)
+
+# dot plot with colors
+p<-ggplot(df, aes(x=freq, y=time, fill=num_servers))+
+  geom_boxplot(position=position_dodge(0.8)) +
+  geom_dotplot(binaxis='y', stackdir='center', binwidth = 1500, position=position_dodge(.8)) +
+  ggtitle("Crack Time by Request Frequency") +
+  xlab("Frequency of Requests (ms)") + ylab("Crack Time (ms)") +
+  labs(fill="Number of \n Workers") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  stat_summary(fun.y=mean, geom="point", shape=18,size=3, color='black', position=position_dodge(.8)) +
+  stat_summary(fun.y = mean, color = "black", geom = "line", size=.5, aes(group = num_servers, color=paste("mean", num_servers)), position=position_dodge(.8))
+
 p
-p + stat_summary(fun.y=mean, geom="point", shape=18,
-                 size=3, color="red")
-
-data_summary <- function(data, varname, groupnames){
-  require(plyr)
-  summary_func <- function(x, col){
-    c(mean = mean(x[[col]], na.rm=TRUE),
-      sd = sd(x[[col]], na.rm=TRUE))
-  }
-  data_sum<-ddply(data, groupnames, .fun=summary_func,
-                  varname)
-  data_sum <- rename(data_sum, c("mean" = varname))
-  return(data_sum)
-}
-
-
-df2 <- data_summary(df, varname="time", 
-                    groupnames=c("num_servers", "freq"))
-# Convert dose to a factor variable
-df2$freq=as.factor(df2$freq)
-head(df2)
-
-
-p<- ggplot(df2, aes(x=freq, y=time, group=num_servers, color=num_servers)) + 
-  geom_line() +
-  geom_point()+
-  geom_errorbar(aes(ymin=time-sd, ymax=time+sd), width=.2,
-                position=position_dodge(0.05))+
-  ylim(0,80000)
-print(p)
-
-
